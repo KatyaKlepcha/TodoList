@@ -3,6 +3,8 @@ import './App.css';
 import {TaskType, Todolist} from './Todolist';
 import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
+import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
+import {Menu} from "@material-ui/icons";
 
 export type FilterValuesType = 'all' | 'completed' | 'active'
 type TodoListType = {
@@ -40,7 +42,7 @@ function App() {
         }
     }
 
-    function changeTaskTitle(taskId: string, newTitle:string, todoListId: string) {
+    function changeTaskTitle(taskId: string, newTitle: string, todoListId: string) {
         //достаем нужный массив по todoListId
         let tasks = tasksObj[todoListId];
         //найдем нужную таску
@@ -77,7 +79,7 @@ function App() {
         setTasks({...tasksObj})
     }
     let changeTodoListTitle = (id: string, newTitle: string) => {
-     const todoList = todoLists.find(tl=>tl.id===id)
+        const todoList = todoLists.find(tl => tl.id === id)
         if (todoList) {
             todoList.title = newTitle
             setTodoLists([...todoLists])
@@ -98,47 +100,68 @@ function App() {
     })//ассоциативный массив
 
     function addTodoList(title: string) {
+        const todoListId = v1()
         let todoList: TodoListType = {
-            id: v1(),
+            id: todoListId,
             filter: "all",
             title: title
         }
         setTodoLists([todoList, ...todoLists]);
-        setTasks({...tasksObj,[todoList.id]: []})
+        setTasks({...tasksObj, [todoListId]: []})
     }
 
     return (
         <div className="App">
-            <AddItemForm addItem={addTodoList}/>
-            {
-                //стрелочн фция вызовется столько раз, сколько объектов сидит в нашем тудулисте (у нас 2)
-                todoLists.map(tl => {//map вызывает стрелочную функция для каждого тудулиста, по кот пробегается map
-                    //фильтрацию нужно делать здесь,т.к. у нас работа с каждым конкретным тудулистом идет внутри map-а
-                    let tasksForTodoList = tasksObj[tl.id];//конкретные таски, кот попадут в todoList определяться внутри стрелочной функции
-                    if (tl.filter === 'completed') {//берем фильтр, кот сидит в конкретном тудулисте
-                        tasksForTodoList = tasksForTodoList.filter(t => t.isDone === true)
-                    }
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <Menu/>
+                    </IconButton>
+                    <Typography variant="h6">
+                        News
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+            <Container fixed>
+                <Grid container style={{padding: '20px 0'}}>
+                    <AddItemForm addItem={addTodoList}/>
+                </Grid>
+                <Grid container spacing={3}>
+                    {
+                        //стрелочн фция вызовется столько раз, сколько объектов сидит в нашем тудулисте (у нас 2)
+                        todoLists.map(tl => {//map вызывает стрелочную функция для каждого тудулиста, по кот пробегается map
+                            //фильтрацию нужно делать здесь,т.к. у нас работа с каждым конкретным тудулистом идет внутри map-а
+                            let tasksForTodoList = tasksObj[tl.id];//конкретные таски, кот попадут в todoList определяться внутри стрелочной функции
+                            if (tl.filter === 'completed') {//берем фильтр, кот сидит в конкретном тудулисте
+                                tasksForTodoList = tasksForTodoList.filter(t => t.isDone === true)
+                            }
 
-                    if (tl.filter === 'active') {//берем фильтр, кот сидит в конкретном тудулисте
-                        tasksForTodoList = tasksForTodoList.filter(t => t.isDone === false)
-                    }
+                            if (tl.filter === 'active') {//берем фильтр, кот сидит в конкретном тудулисте
+                                tasksForTodoList = tasksForTodoList.filter(t => t.isDone === false)
+                            }
 
-                    return <Todolist
-                        key={tl.id}
-                        id={tl.id}
-                        title={tl.title}
-                        tasks={tasksForTodoList}//сюда попадет отфильтрованный массив тасок
-                        removeTask={removeTask}
-                        changeFilter={changeFilter}
-                        addTask={addTask}
-                        changeTaskStatus={changeStatus}
-                        filter={tl.filter}
-                        removeTodoList={removeTodoList}
-                        changeTodoListTitle={changeTodoListTitle}
-                        changeTaskTitle={changeTaskTitle}
-                    />
-                })
-            }
+                            return <Grid item key={tl.id}>
+                                <Paper style={{padding: "10px"}}>
+                                    <Todolist
+                                        id={tl.id}
+                                        title={tl.title}
+                                        tasks={tasksForTodoList}//сюда попадет отфильтрованный массив тасок
+                                        removeTask={removeTask}
+                                        changeFilter={changeFilter}
+                                        addTask={addTask}
+                                        changeTaskStatus={changeStatus}
+                                        filter={tl.filter}
+                                        removeTodoList={removeTodoList}
+                                        changeTodoListTitle={changeTodoListTitle}
+                                        changeTaskTitle={changeTaskTitle}
+                                    />
+                                </Paper>
+                            </Grid>
+                        })
+                    }
+                </Grid>
+            </Container>
 
         </div>
     );
