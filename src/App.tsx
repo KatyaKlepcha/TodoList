@@ -13,7 +13,7 @@ export type TodoListType = {
     filter: FilterValuesType
 }
 
-type TasksStateType = {
+export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
 
@@ -72,6 +72,19 @@ function App() {
         {id: todoListId2, title: 'What to buy', filter: 'all'}
     ])
 
+    let [tasksObj, setTasks] = useState<TasksStateType>({
+        [todoListId1]: [//храним значения для отдельного тудулиста в виде такой стр-ры
+            {id: v1(), title: "HTML&CSS", isDone: true},
+            {id: v1(), title: "JS", isDone: true},
+            {id: v1(), title: "ReactJS", isDone: false},
+            {id: v1(), title: "Rest API", isDone: false},
+            {id: v1(), title: "GraphQL", isDone: false},],
+        [todoListId2]: [//обращаемся не к самому св-ву todoListId1, а к тому, что в нем хранится
+            {id: v1(), title: "Book", isDone: false},
+            {id: v1(), title: "Milk", isDone: true},]
+    })//ассоциативный массив
+
+
     let removeTodoList = (todoListId: string) => {
         let filteredTodoList = todoLists.filter(tl => tl.id !== todoListId)
         setTodoLists(filteredTodoList)
@@ -85,19 +98,6 @@ function App() {
             setTodoLists([...todoLists])
         }
     }
-
-
-    let [tasksObj, setTasks] = useState<TasksStateType>({
-        [todoListId1]: [//храним значения для отдельного тудулиста в виде такой стр-ры
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true},
-            {id: v1(), title: "ReactJS", isDone: false},
-            {id: v1(), title: "Rest API", isDone: false},
-            {id: v1(), title: "GraphQL", isDone: false},],
-        [todoListId2]: [//обращаемся не к самому св-ву todoListId1, а к тому, что в нем хранится
-            {id: v1(), title: "Book", isDone: false},
-            {id: v1(), title: "Milk", isDone: true},]
-    })//ассоциативный массив
 
     function addTodoList(title: string) {
         const todoListId = v1()
