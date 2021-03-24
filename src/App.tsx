@@ -18,6 +18,7 @@ export type TasksStateType = {
 }
 
 function App() {
+
     function removeTask(id: string, todoListId: string) {
         let tasks = tasksObj[todoListId];//прежде, чем удалять, нам нужно достать нужный массив
         let filteredTasks = tasks.filter(t => t.id !== id);
